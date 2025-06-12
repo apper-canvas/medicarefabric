@@ -52,11 +52,12 @@ function PatientsPage() {
   const filterPatients = () => {
     let filtered = patients;
 
-    if (searchTerm) {
+if (searchTerm) {
       filtered = filtered.filter(patient =>
-        `${patient.firstName} ${patient.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        patient.phone.includes(searchTerm) ||
-        patient.department.toLowerCase().includes(searchTerm.toLowerCase())
+        `${patient.firstName || ''} ${patient.lastName || ''}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (patient.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (patient.phone || '').includes(searchTerm) ||
+        (patient.department || '').toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -68,6 +69,7 @@ function PatientsPage() {
       filtered = filtered.filter(patient => patient.department === departmentFilter);
     }
 
+    setFilteredPatients(filtered);
     setFilteredPatients(filtered);
   };
 

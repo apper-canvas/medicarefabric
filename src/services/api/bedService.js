@@ -1,9 +1,10 @@
 import { toast } from 'react-toastify';
 
+// Utility function to add delay for better UX
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const getAll = async () => {
-  await delay(320);
+  await delay(300);
   try {
     const { ApperClient } = window.ApperSDK;
     const apperClient = new ApperClient({
@@ -11,11 +12,16 @@ export const getAll = async () => {
       apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
     });
     
+    // Get all fields from bed table
+    const tableFields = [
+      'Name', 'Tags', 'Owner', 'CreatedOn', 'CreatedBy', 'ModifiedOn', 'ModifiedBy',
+      'ward', 'number', 'type', 'status', 'patient_id', 'last_cleaned'
+    ];
+    
     const params = {
-      fields: [
-        'Name', 'Tags', 'Owner', 'CreatedOn', 'CreatedBy', 'ModifiedOn', 'ModifiedBy',
-        'ward', 'number', 'type', 'status', 'patient_id', 'last_cleaned'
-      ]
+      fields: tableFields,
+      orderBy: [{ fieldName: "number", SortType: "ASC" }],
+      pagingInfo: { limit: 200, offset: 0 }
     };
     
     const response = await apperClient.fetchRecords('bed', params);
@@ -26,10 +32,24 @@ export const getAll = async () => {
       return [];
     }
     
-    return response.data || [];
+    // Transform database response to UI format
+    return (response.data || []).map(bed => ({
+      id: bed.Id,
+      name: bed.Name || `Bed ${bed.number}`,
+      ward: bed.ward || '',
+      number: bed.number || '',
+      type: bed.type || '',
+      status: bed.status || 'available',
+      patientId: bed.patient_id,
+      lastCleaned: bed.last_cleaned,
+      tags: bed.Tags || '',
+      owner: bed.Owner || '',
+      createdOn: bed.CreatedOn,
+      modifiedOn: bed.ModifiedOn
+    }));
   } catch (error) {
     console.error("Error fetching beds:", error);
-    toast.error("Failed to fetch beds");
+    toast.error("Failed to load beds");
     return [];
   }
 };
@@ -43,25 +63,43 @@ export const getById = async (id) => {
       apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
     });
     
-    const params = {
-      fields: [
-        'Name', 'Tags', 'Owner', 'CreatedOn', 'CreatedBy', 'ModifiedOn', 'ModifiedBy',
-        'ward', 'number', 'type', 'status', 'patient_id', 'last_cleaned'
-      ]
-    };
+    const tableFields = [
+      'Name', 'Tags', 'Owner', 'CreatedOn', 'CreatedBy', 'ModifiedOn', 'ModifiedBy',
+      'ward', 'number', 'type', 'status', 'patient_id', 'last_cleaned'
+    ];
     
+    const params = { fields: tableFields };
     const response = await apperClient.getRecordById('bed', parseInt(id), params);
     
     if (!response.success) {
       console.error(response.message);
       toast.error(response.message);
-      throw new Error(response.message);
+      return null;
     }
     
-    return response.data;
+    if (!response.data) {
+      return null;
+    }
+    
+    const bed = response.data;
+    return {
+      id: bed.Id,
+      name: bed.Name || `Bed ${bed.number}`,
+      ward: bed.ward || '',
+      number: bed.number || '',
+      type: bed.type || '',
+      status: bed.status || 'available',
+      patientId: bed.patient_id,
+      lastCleaned: bed.last_cleaned,
+      tags: bed.Tags || '',
+      owner: bed.Owner || '',
+      createdOn: bed.CreatedOn,
+      modifiedOn: bed.ModifiedOn
+    };
   } catch (error) {
     console.error(`Error fetching bed with ID ${id}:`, error);
-    throw error;
+    toast.error("Failed to load bed details");
+    return null;
   }
 };
 
@@ -223,9 +261,9 @@ export const remove = async (id) => {
       return successfulDeletions.length > 0;
     }
     
-    return true;
+return true;
   } catch (error) {
-console.error("Error deleting bed:", error);
+    console.error("Error deleting bed:", error);
     throw error;
   }
 };

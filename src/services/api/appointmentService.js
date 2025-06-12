@@ -1,9 +1,10 @@
 import { toast } from 'react-toastify';
 
+// Utility function to add delay for better UX
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const getAll = async () => {
-  await delay(250);
+  await delay(300);
   try {
     const { ApperClient } = window.ApperSDK;
     const apperClient = new ApperClient({
@@ -11,11 +12,16 @@ export const getAll = async () => {
       apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
     });
     
+    // Get all fields from appointment table
+    const tableFields = [
+      'Name', 'Tags', 'Owner', 'CreatedOn', 'CreatedBy', 'ModifiedOn', 'ModifiedBy',
+      'doctor_id', 'date_time', 'duration', 'type', 'status', 'department', 'room', 'notes', 'patient_id'
+    ];
+    
     const params = {
-      fields: [
-        'Name', 'Tags', 'Owner', 'CreatedOn', 'CreatedBy', 'ModifiedOn', 'ModifiedBy',
-        'doctor_id', 'date_time', 'duration', 'type', 'status', 'department', 'room', 'notes', 'patient_id'
-      ]
+      fields: tableFields,
+      orderBy: [{ fieldName: "date_time", SortType: "ASC" }],
+      pagingInfo: { limit: 100, offset: 0 }
     };
     
     const response = await apperClient.fetchRecords('appointment', params);
@@ -26,10 +32,29 @@ export const getAll = async () => {
       return [];
     }
     
-    return response.data || [];
+    // Transform database response to UI format
+    return (response.data || []).map(appointment => ({
+      id: appointment.Id,
+      name: appointment.Name || `Appointment - ${appointment.type}`,
+      patientId: appointment.patient_id,
+      patientName: appointment.patient_id || 'Unknown Patient', // Will be resolved by UI with patient lookup
+      doctorId: appointment.doctor_id,
+      doctorName: appointment.doctor_id || 'Dr. Smith',
+      dateTime: appointment.date_time,
+      duration: appointment.duration || 30,
+      type: appointment.type,
+      status: appointment.status || 'Scheduled',
+      department: appointment.department || '',
+      room: appointment.room || '',
+      notes: appointment.notes || '',
+      tags: appointment.Tags || '',
+      owner: appointment.Owner || '',
+      createdOn: appointment.CreatedOn,
+      modifiedOn: appointment.ModifiedOn
+    }));
   } catch (error) {
     console.error("Error fetching appointments:", error);
-    toast.error("Failed to fetch appointments");
+    toast.error("Failed to load appointments");
     return [];
   }
 };
@@ -43,25 +68,48 @@ export const getById = async (id) => {
       apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
     });
     
-    const params = {
-      fields: [
-        'Name', 'Tags', 'Owner', 'CreatedOn', 'CreatedBy', 'ModifiedOn', 'ModifiedBy',
-        'doctor_id', 'date_time', 'duration', 'type', 'status', 'department', 'room', 'notes', 'patient_id'
-      ]
-    };
+    const tableFields = [
+      'Name', 'Tags', 'Owner', 'CreatedOn', 'CreatedBy', 'ModifiedOn', 'ModifiedBy',
+      'doctor_id', 'date_time', 'duration', 'type', 'status', 'department', 'room', 'notes', 'patient_id'
+    ];
     
+    const params = { fields: tableFields };
     const response = await apperClient.getRecordById('appointment', parseInt(id), params);
     
     if (!response.success) {
       console.error(response.message);
       toast.error(response.message);
-      throw new Error(response.message);
+      return null;
     }
     
-    return response.data;
+    if (!response.data) {
+      return null;
+    }
+    
+    const appointment = response.data;
+    return {
+      id: appointment.Id,
+      name: appointment.Name || `Appointment - ${appointment.type}`,
+      patientId: appointment.patient_id,
+      patientName: appointment.patient_id || 'Unknown Patient',
+      doctorId: appointment.doctor_id,
+      doctorName: appointment.doctor_id || 'Dr. Smith',
+      dateTime: appointment.date_time,
+      duration: appointment.duration || 30,
+      type: appointment.type,
+      status: appointment.status || 'Scheduled',
+      department: appointment.department || '',
+      room: appointment.room || '',
+      notes: appointment.notes || '',
+      tags: appointment.Tags || '',
+      owner: appointment.Owner || '',
+      createdOn: appointment.CreatedOn,
+      modifiedOn: appointment.ModifiedOn
+    };
   } catch (error) {
     console.error(`Error fetching appointment with ID ${id}:`, error);
-    throw error;
+    toast.error("Failed to load appointment details");
+    return null;
   }
 };
 
@@ -227,9 +275,9 @@ export const remove = async (id) => {
       return successfulDeletions.length > 0;
     }
     
-    return true;
+return true;
   } catch (error) {
-console.error("Error deleting appointment:", error);
+    console.error("Error deleting appointment:", error);
     throw error;
   }
 };

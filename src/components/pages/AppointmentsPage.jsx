@@ -75,14 +75,17 @@ function AppointmentsPage() {
     }
 
     setCreateLoading(true);
-    try {
-      const selectedPatient = patients.find(p => p.id === formData.patientId);
+try {
+      const selectedPatient = patients.find(p => p.id === parseInt(formData.patientId));
       const appointmentData = {
         ...formData,
+        patient_id: parseInt(formData.patientId), // Use database field name
         patientName: selectedPatient?.name || 'Unknown Patient',
         doctorName: 'Dr. Smith', // Default doctor - could be made configurable
         department: selectedPatient?.department || 'General'
       };
+
+      await appointmentService.create(appointmentData);
 
       await appointmentService.create(appointmentData);
       toast.success('Appointment created successfully');

@@ -44,13 +44,15 @@ function BedsPage() {
     }
   };
 
-  const updateBedStatus = async (bedId, newStatus, patientId = null) => {
+const updateBedStatus = async (bedId, newStatus, patientId = null) => {
     try {
-      const updatedBed = await bedService.update(bedId, {
+      const updateData = {
         status: newStatus,
-        patientId: patientId,
-        lastCleaned: newStatus === 'cleaning' ? new Date().toISOString() : undefined
-      });
+        patient_id: patientId ? parseInt(patientId) : null, // Use database field name and ensure integer
+        last_cleaned: newStatus === 'cleaning' ? new Date().toISOString() : undefined
+      };
+
+      const updatedBed = await bedService.update(bedId, updateData);
 
       setBeds(beds.map(bed => bed.id === bedId ? updatedBed : bed));
       toast.success(`Bed ${updatedBed.number} status updated`);

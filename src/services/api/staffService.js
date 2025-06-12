@@ -1,9 +1,10 @@
 import { toast } from 'react-toastify';
 
+// Utility function to add delay for better UX
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const getAll = async () => {
-  await delay(280);
+  await delay(300);
   try {
     const { ApperClient } = window.ApperSDK;
     const apperClient = new ApperClient({
@@ -11,11 +12,16 @@ export const getAll = async () => {
       apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
     });
     
+    // Get all fields from staff table
+    const tableFields = [
+      'Name', 'Tags', 'Owner', 'CreatedOn', 'CreatedBy', 'ModifiedOn', 'ModifiedBy',
+      'role', 'department', 'specialization', 'availability', 'current_patients'
+    ];
+    
     const params = {
-      fields: [
-        'Name', 'Tags', 'Owner', 'CreatedOn', 'CreatedBy', 'ModifiedOn', 'ModifiedBy',
-        'role', 'department', 'specialization', 'availability', 'current_patients'
-      ]
+      fields: tableFields,
+      orderBy: [{ fieldName: "Name", SortType: "ASC" }],
+      pagingInfo: { limit: 100, offset: 0 }
     };
     
     const response = await apperClient.fetchRecords('staff', params);
@@ -26,10 +32,23 @@ export const getAll = async () => {
       return [];
     }
     
-    return response.data || [];
+    // Transform database response to UI format
+    return (response.data || []).map(staff => ({
+      id: staff.Id,
+      name: staff.Name || '',
+      role: staff.role || '',
+      department: staff.department || '',
+      specialization: staff.specialization || '',
+      availability: staff.availability || '',
+      currentPatients: staff.current_patients ? staff.current_patients.split(', ') : [],
+      tags: staff.Tags || '',
+      owner: staff.Owner || '',
+      createdOn: staff.CreatedOn,
+      modifiedOn: staff.ModifiedOn
+    }));
   } catch (error) {
     console.error("Error fetching staff:", error);
-    toast.error("Failed to fetch staff");
+    toast.error("Failed to load staff");
     return [];
   }
 };
@@ -43,25 +62,42 @@ export const getById = async (id) => {
       apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
     });
     
-    const params = {
-      fields: [
-        'Name', 'Tags', 'Owner', 'CreatedOn', 'CreatedBy', 'ModifiedOn', 'ModifiedBy',
-        'role', 'department', 'specialization', 'availability', 'current_patients'
-      ]
-    };
+    const tableFields = [
+      'Name', 'Tags', 'Owner', 'CreatedOn', 'CreatedBy', 'ModifiedOn', 'ModifiedBy',
+      'role', 'department', 'specialization', 'availability', 'current_patients'
+    ];
     
+    const params = { fields: tableFields };
     const response = await apperClient.getRecordById('staff', parseInt(id), params);
     
     if (!response.success) {
       console.error(response.message);
       toast.error(response.message);
-      throw new Error(response.message);
+      return null;
     }
     
-    return response.data;
+    if (!response.data) {
+      return null;
+    }
+    
+    const staff = response.data;
+    return {
+      id: staff.Id,
+      name: staff.Name || '',
+      role: staff.role || '',
+      department: staff.department || '',
+      specialization: staff.specialization || '',
+      availability: staff.availability || '',
+      currentPatients: staff.current_patients ? staff.current_patients.split(', ') : [],
+      tags: staff.Tags || '',
+      owner: staff.Owner || '',
+      createdOn: staff.CreatedOn,
+      modifiedOn: staff.ModifiedOn
+    };
   } catch (error) {
-    console.error(`Error fetching staff member with ID ${id}:`, error);
-    throw error;
+    console.error(`Error fetching staff with ID ${id}:`, error);
+    toast.error("Failed to load staff details");
+    return null;
   }
 };
 
@@ -83,8 +119,8 @@ export const create = async (staffData) => {
         role: staffData.role,
         department: staffData.department,
         specialization: staffData.specialization || '',
-        availability: typeof staffData.availability === 'object' ? JSON.stringify(staffData.availability) : (staffData.availability || ''),
-        current_patients: Array.isArray(staffData.currentPatients) ? staffData.currentPatients.join(',') : (staffData.current_patients || '')
+        availability: staffData.availability || '',
+        current_patients: Array.isArray(staffData.currentPatients) ? staffData.currentPatients.join(', ') : (staffData.current_patients || '')
       }]
     };
     
@@ -115,9 +151,9 @@ export const create = async (staffData) => {
       }
     }
     
-    throw new Error('Failed to create staff member');
+    throw new Error('Failed to create staff');
   } catch (error) {
-    console.error("Error creating staff member:", error);
+    console.error("Error creating staff:", error);
     throw error;
   }
 };
@@ -143,9 +179,9 @@ export const update = async (id, updateData) => {
     if (updateData.role !== undefined) updateFields.role = updateData.role;
     if (updateData.department !== undefined) updateFields.department = updateData.department;
     if (updateData.specialization !== undefined) updateFields.specialization = updateData.specialization;
-    if (updateData.availability !== undefined) updateFields.availability = typeof updateData.availability === 'object' ? JSON.stringify(updateData.availability) : updateData.availability;
+    if (updateData.availability !== undefined) updateFields.availability = updateData.availability;
     if (updateData.current_patients !== undefined) updateFields.current_patients = updateData.current_patients;
-    if (updateData.currentPatients !== undefined) updateFields.current_patients = Array.isArray(updateData.currentPatients) ? updateData.currentPatients.join(',') : updateData.currentPatients;
+    if (updateData.currentPatients !== undefined) updateFields.current_patients = Array.isArray(updateData.currentPatients) ? updateData.currentPatients.join(', ') : updateData.currentPatients;
     
     const params = {
       records: [updateFields]
@@ -178,9 +214,9 @@ export const update = async (id, updateData) => {
       }
     }
     
-    throw new Error('Failed to update staff member');
+    throw new Error('Failed to update staff');
   } catch (error) {
-    console.error("Error updating staff member:", error);
+    console.error("Error updating staff:", error);
     throw error;
   }
 };
@@ -220,9 +256,9 @@ export const remove = async (id) => {
       return successfulDeletions.length > 0;
     }
     
-    return true;
-} catch (error) {
-    console.error("Error deleting staff member:", error);
+    return false;
+  } catch (error) {
+    console.error("Error deleting staff:", error);
     throw error;
   }
 };

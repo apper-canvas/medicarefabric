@@ -1,5 +1,6 @@
 import { toast } from 'react-toastify';
 
+// Utility function to add delay for better UX
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const getAll = async () => {
@@ -11,13 +12,18 @@ export const getAll = async () => {
       apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
     });
     
+    // Get all fields from patient table
+    const tableFields = [
+      'Name', 'Tags', 'Owner', 'CreatedOn', 'CreatedBy', 'ModifiedOn', 'ModifiedBy',
+      'first_name', 'last_name', 'date_of_birth', 'gender', 'phone', 'email', 'address',
+      'emergency_contact_name', 'emergency_contact_phone', 'emergency_contact_relationship',
+      'medical_history', 'current_status', 'admission_date', 'department', 'assigned_doctor', 'bed_number'
+    ];
+    
     const params = {
-      fields: [
-        'Name', 'Tags', 'Owner', 'CreatedOn', 'CreatedBy', 'ModifiedOn', 'ModifiedBy',
-        'first_name', 'last_name', 'date_of_birth', 'gender', 'phone', 'email', 'address',
-        'emergency_contact_name', 'emergency_contact_phone', 'emergency_contact_relationship',
-        'medical_history', 'current_status', 'admission_date', 'department', 'assigned_doctor', 'bed_number'
-      ]
+      fields: tableFields,
+      orderBy: [{ fieldName: "CreatedOn", SortType: "DESC" }],
+      pagingInfo: { limit: 100, offset: 0 }
     };
     
     const response = await apperClient.fetchRecords('patient', params);
@@ -28,10 +34,36 @@ export const getAll = async () => {
       return [];
     }
     
-    return response.data || [];
+    // Transform database response to UI format
+    return (response.data || []).map(patient => ({
+      id: patient.Id,
+      name: patient.Name || `${patient.first_name || ''} ${patient.last_name || ''}`.trim(),
+      firstName: patient.first_name || '',
+      lastName: patient.last_name || '',
+      dateOfBirth: patient.date_of_birth,
+      gender: patient.gender,
+      phone: patient.phone || '',
+      email: patient.email || '',
+      address: patient.address || '',
+      emergencyContact: {
+        name: patient.emergency_contact_name || '',
+        phone: patient.emergency_contact_phone || '',
+        relationship: patient.emergency_contact_relationship || ''
+      },
+      medicalHistory: patient.medical_history ? patient.medical_history.split(', ') : [],
+      currentStatus: patient.current_status || 'admitted',
+      admissionDate: patient.admission_date,
+      department: patient.department || '',
+      assignedDoctor: patient.assigned_doctor || '',
+      bedNumber: patient.bed_number || '',
+      tags: patient.Tags || '',
+      owner: patient.Owner || '',
+      createdOn: patient.CreatedOn,
+      modifiedOn: patient.ModifiedOn
+    }));
   } catch (error) {
     console.error("Error fetching patients:", error);
-    toast.error("Failed to fetch patients");
+    toast.error("Failed to load patients");
     return [];
   }
 };
@@ -45,27 +77,57 @@ export const getById = async (id) => {
       apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
     });
     
-    const params = {
-      fields: [
-        'Name', 'Tags', 'Owner', 'CreatedOn', 'CreatedBy', 'ModifiedOn', 'ModifiedBy',
-        'first_name', 'last_name', 'date_of_birth', 'gender', 'phone', 'email', 'address',
-        'emergency_contact_name', 'emergency_contact_phone', 'emergency_contact_relationship',
-        'medical_history', 'current_status', 'admission_date', 'department', 'assigned_doctor', 'bed_number'
-      ]
-    };
+    const tableFields = [
+      'Name', 'Tags', 'Owner', 'CreatedOn', 'CreatedBy', 'ModifiedOn', 'ModifiedBy',
+      'first_name', 'last_name', 'date_of_birth', 'gender', 'phone', 'email', 'address',
+      'emergency_contact_name', 'emergency_contact_phone', 'emergency_contact_relationship',
+      'medical_history', 'current_status', 'admission_date', 'department', 'assigned_doctor', 'bed_number'
+    ];
     
+    const params = { fields: tableFields };
     const response = await apperClient.getRecordById('patient', parseInt(id), params);
     
     if (!response.success) {
       console.error(response.message);
       toast.error(response.message);
-      throw new Error(response.message);
+      return null;
     }
     
-    return response.data;
+    if (!response.data) {
+      return null;
+    }
+    
+    const patient = response.data;
+    return {
+      id: patient.Id,
+      name: patient.Name || `${patient.first_name || ''} ${patient.last_name || ''}`.trim(),
+      firstName: patient.first_name || '',
+      lastName: patient.last_name || '',
+      dateOfBirth: patient.date_of_birth,
+      gender: patient.gender,
+      phone: patient.phone || '',
+      email: patient.email || '',
+      address: patient.address || '',
+      emergencyContact: {
+        name: patient.emergency_contact_name || '',
+        phone: patient.emergency_contact_phone || '',
+        relationship: patient.emergency_contact_relationship || ''
+      },
+      medicalHistory: patient.medical_history ? patient.medical_history.split(', ') : [],
+      currentStatus: patient.current_status || 'admitted',
+      admissionDate: patient.admission_date,
+      department: patient.department || '',
+      assignedDoctor: patient.assigned_doctor || '',
+      bedNumber: patient.bed_number || '',
+      tags: patient.Tags || '',
+      owner: patient.Owner || '',
+      createdOn: patient.CreatedOn,
+      modifiedOn: patient.ModifiedOn
+    };
   } catch (error) {
     console.error(`Error fetching patient with ID ${id}:`, error);
-    throw error;
+    toast.error("Failed to load patient details");
+    return null;
   }
 };
 
@@ -244,10 +306,10 @@ export const remove = async (id) => {
       }
       
       return successfulDeletions.length > 0;
-    }
+}
     
     return true;
-} catch (error) {
+  } catch (error) {
     console.error("Error deleting patient:", error);
     throw error;
   }
