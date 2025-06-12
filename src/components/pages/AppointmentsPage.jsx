@@ -14,13 +14,7 @@ import * as appointmentService from '@/services/api/appointmentService';
 import * as patientService from '@/services/api/patientService';
 
 function AppointmentsPage() {
-function AppointmentsPage() {
   const [appointments, setAppointments] = useState([]);
-  const [patients, setPatients] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [view, setView] = useState('list'); // list, calendar
-const [appointments, setAppointments] = useState([]);
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -119,14 +113,17 @@ const [appointments, setAppointments] = useState([]);
 
   const completedAppointmentsCount = appointments.filter(apt => apt.status === 'completed').length;
   const cancelledAppointmentsCount = appointments.filter(apt => apt.status === 'cancelled').length;
+if (loading) {
+    return (
+      <div className="p-6">
+        <Loader />
+      </div>
+    );
+  }
 
-<PageHeader
-        title="Appointments"
-        actions={
-          <div className="flex items-center space-x-3">
-            <Button
-              onClick={() => setShowCreateModal(true)}
-              variant="primary"
+  if (error) {
+    return (
+      <div className="p-6">
         <ErrorState message={error} onRetry={loadData} />
       </div>
     );
@@ -135,7 +132,7 @@ const [appointments, setAppointments] = useState([]);
   return (
     <div className="p-6 space-y-6">
       <PageHeader
-title="Appointments"
+        title="Appointments"
         actions={
           <div className="flex items-center space-x-3">
             <Button
@@ -187,17 +184,17 @@ title="Appointments"
           bgColorClass="bg-info/10"
           delay={0.1}
         />
-        <MetricCard
+<MetricCard
           title="Completed"
           value={completedAppointmentsCount}
           iconName="CheckCircle"
           iconColorClass="text-success"
           bgColorClass="bg-success/10"
-patients={patients}
-        onUpdateStatus={updateAppointmentStatus}
-      />
-
-      {/* Create Appointment Modal */}
+          delay={0.2}
+        />
+        <MetricCard
+          title="Cancelled"
+          value={cancelledAppointmentsCount}
           iconName="XCircle"
           iconColorClass="text-error"
           bgColorClass="bg-error/10"
@@ -208,9 +205,8 @@ patients={patients}
       <AppointmentsList
         appointments={appointments}
         patients={patients}
-onUpdateStatus={updateAppointmentStatus}
+        onUpdateStatus={updateAppointmentStatus}
       />
-
       {/* Create Appointment Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
