@@ -1,0 +1,137 @@
+[
+  {
+    "id": "1",
+    "ward": "General",
+    "number": "G-101",
+    "type": "Standard",
+    "status": "occupied",
+    "patientId": "1",
+    "lastCleaned": "2024-01-15T06:00:00.000Z"
+  },
+  {
+    "id": "2",
+    "ward": "General",
+    "number": "G-102",
+    "type": "Standard",
+    "status": "available",
+    "patientId": null,
+    "lastCleaned": "2024-01-16T10:30:00.000Z"
+  },
+  {
+    "id": "3",
+    "ward": "General",
+    "number": "G-103",
+    "type": "Standard",
+    "status": "cleaning",
+    "patientId": null,
+    "lastCleaned": "2024-01-16T14:15:00.000Z"
+  },
+  {
+    "id": "4",
+    "ward": "ICU",
+    "number": "I-201",
+    "type": "ICU",
+    "status": "occupied",
+    "patientId": "3",
+    "lastCleaned": "2024-01-16T02:00:00.000Z"
+  },
+  {
+    "id": "5",
+    "ward": "ICU",
+    "number": "I-202",
+    "type": "ICU",
+    "status": "available",
+    "patientId": null,
+    "lastCleaned": "2024-01-16T08:45:00.000Z"
+  },
+  {
+    "id": "6",
+    "ward": "Emergency",
+    "number": "E-301",
+    "type": "Emergency",
+    "status": "available",
+    "patientId": null,
+    "lastCleaned": "2024-01-16T12:00:00.000Z"
+  },
+  {
+    "id": "7",
+    "ward": "Emergency",
+    "number": "E-302",
+    "type": "Emergency",
+    "status": "occupied",
+    "patientId": "2",
+    "lastCleaned": "2024-01-14T13:20:00.000Z"
+  },
+  {
+    "id": "8",
+    "ward": "Pediatrics",
+    "number": "P-401",
+    "type": "Pediatric",
+    "status": "available",
+    "patientId": null,
+    "lastCleaned": "2024-01-16T09:15:00.000Z"
+  },
+  {
+    "id": "9",
+    "ward": "Pediatrics",
+    "number": "P-402",
+    "type": "Pediatric",
+    "status": "maintenance",
+    "patientId": null,
+    "lastCleaned": "2024-01-15T16:30:00.000Z"
+  },
+  {
+    "id": "10",
+    "ward": "Maternity",
+    "number": "M-501",
+    "type": "Maternity",
+    "status": "available",
+    "patientId": null,
+    "lastCleaned": "2024-01-16T11:45:00.000Z"
+  },
+  {
+    "id": "11",
+    "ward": "Maternity",
+    "number": "M-502",
+    "type": "Maternity",
+    "status": "occupied",
+    "patientId": "4",
+    "lastCleaned": "2024-01-13T10:15:00.000Z"
+  },
+  {
+    "id": "12",
+    "ward": "Surgery",
+    "number": "S-601",
+    "type": "Post-Op",
+    "status": "occupied",
+    "patientId": "5",
+    "lastCleaned": "2024-01-12T15:30:00.000Z"
+  },
+  {
+    "id": "13",
+    "ward": "Surgery",
+    "number": "S-602",
+    "type": "Post-Op",
+    "status": "available",
+    "patientId": null,
+    "lastCleaned": "2024-01-16T13:45:00.000Z"
+  },
+  {
+    "id": "14",
+    "ward": "General",
+    "number": "G-104",
+    "type": "Standard",
+    "status": "available",
+    "patientId": null,
+    "lastCleaned": "2024-01-16T07:30:00.000Z"
+  },
+  {
+    "id": "15",
+    "ward": "General",
+    "number": "G-105",
+    "type": "Standard",
+    "status": "available",
+    "patientId": null,
+    "lastCleaned": "2024-01-16T09:00:00.000Z"
+  }
+]

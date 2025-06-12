@@ -1,0 +1,62 @@
+[
+  {
+    "id": "1",
+    "patientId": "1",
+    "doctorId": "Dr. Williams",
+    "dateTime": "2024-01-17T10:00:00.000Z",
+    "duration": 30,
+    "type": "Follow-up",
+    "status": "confirmed",
+    "department": "Cardiology",
+    "room": "C-201",
+    "notes": "Regular check-up for blood pressure monitoring"
+  },
+  {
+    "id": "2",
+    "patientId": "2",
+    "doctorId": "Dr. Martinez",
+    "dateTime": "2024-01-17T14:30:00.000Z",
+    "duration": 45,
+    "type": "Consultation",
+    "status": "pending",
+    "department": "Orthopedics",
+    "room": "O-101",
+    "notes": "X-ray review and treatment plan discussion"
+  },
+  {
+    "id": "3",
+    "patientId": "4",
+    "doctorId": "Dr. Williams",
+    "dateTime": "2024-01-18T09:15:00.000Z",
+    "duration": 30,
+    "type": "Routine Check",
+    "status": "confirmed",
+    "department": "Cardiology",
+    "room": "C-201",
+    "notes": "Heart function assessment"
+  },
+  {
+    "id": "4",
+    "patientId": "5",
+    "doctorId": "Dr. Anderson",
+    "dateTime": "2024-01-18T11:00:00.000Z",
+    "duration": 60,
+    "type": "Discharge Planning",
+    "status": "completed",
+    "department": "Neurology",
+    "room": "N-102",
+    "notes": "Final assessment before discharge"
+  },
+  {
+    "id": "5",
+    "patientId": "3",
+    "doctorId": "Dr. Thompson",
+    "dateTime": "2024-01-16T15:00:00.000Z",
+    "duration": 20,
+    "type": "Emergency",
+    "status": "completed",
+    "department": "Emergency",
+    "room": "E-001",
+    "notes": "Critical care evaluation"
+  }
+]

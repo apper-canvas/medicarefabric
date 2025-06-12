@@ -1,0 +1,79 @@
+[
+  {
+    "id": "1",
+    "name": "Dr. Sarah Williams",
+    "role": "Cardiologist",
+    "department": "Cardiology",
+    "specialization": "Interventional Cardiology",
+    "availability": {
+      "monday": ["09:00", "17:00"],
+      "tuesday": ["09:00", "17:00"],
+      "wednesday": ["09:00", "17:00"],
+      "thursday": ["09:00", "17:00"],
+      "friday": ["09:00", "15:00"]
+    },
+    "currentPatients": ["1", "4"]
+  },
+  {
+    "id": "2",
+    "name": "Dr. James Martinez",
+    "role": "Orthopedic Surgeon",
+    "department": "Orthopedics",
+    "specialization": "Spine Surgery",
+    "availability": {
+      "monday": ["08:00", "16:00"],
+      "tuesday": ["08:00", "16:00"],
+      "wednesday": ["10:00", "18:00"],
+      "thursday": ["08:00", "16:00"],
+      "friday": ["08:00", "14:00"]
+    },
+    "currentPatients": ["2"]
+  },
+  {
+    "id": "3",
+    "name": "Dr. Emily Thompson",
+    "role": "Emergency Physician",
+    "department": "Emergency",
+    "specialization": "Emergency Medicine",
+    "availability": {
+      "monday": ["00:00", "23:59"],
+      "tuesday": ["00:00", "23:59"],
+      "wednesday": ["00:00", "23:59"],
+      "thursday": ["00:00", "23:59"],
+      "friday": ["00:00", "23:59"],
+      "saturday": ["00:00", "23:59"],
+      "sunday": ["00:00", "23:59"]
+    },
+    "currentPatients": ["3"]
+  },
+  {
+    "id": "4",
+    "name": "Dr. Michael Anderson",
+    "role": "Neurologist",
+    "department": "Neurology",
+    "specialization": "Stroke Care",
+    "availability": {
+      "monday": ["10:00", "18:00"],
+      "tuesday": ["10:00", "18:00"],
+      "wednesday": ["10:00", "18:00"],
+      "thursday": ["10:00", "18:00"],
+      "friday": ["10:00", "16:00"]
+    },
+    "currentPatients": ["5"]
+  },
+  {
+    "id": "5",
+    "name": "Nurse Jennifer Brown",
+    "role": "Head Nurse",
+    "department": "ICU",
+    "specialization": "Critical Care",
+    "availability": {
+      "monday": ["07:00", "19:00"],
+      "tuesday": ["07:00", "19:00"],
+      "wednesday": ["07:00", "19:00"],
+      "thursday": ["07:00", "19:00"],
+      "friday": ["07:00", "19:00"]
+    },
+    "currentPatients": []
+  }
+]
