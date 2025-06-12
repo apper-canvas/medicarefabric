@@ -5,7 +5,8 @@ import ApperIcon from '@/components/ApperIcon';
 import { routes } from './config/routes';
 
 function Layout() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const location = useLocation();
 
   const visibleRoutes = Object.values(routes).filter(route => !route.hidden);
@@ -40,11 +41,128 @@ function Layout() {
             </div>
           </div>
 
-          <div className="flex items-center space-x-3">
-            <button className="p-2 rounded-lg hover:bg-surface-100 transition-colors relative">
-              <ApperIcon name="Bell" size={20} />
-              <span className="absolute -top-1 -right-1 w-3 h-3 bg-error rounded-full"></span>
-            </button>
+<div className="flex items-center space-x-3 relative">
+            <div className="relative">
+              <button 
+                onClick={() => setNotificationsOpen(!notificationsOpen)}
+                className="p-2 rounded-lg hover:bg-surface-100 transition-colors relative"
+              >
+                <ApperIcon name="Bell" size={20} />
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-error rounded-full"></span>
+              </button>
+              
+              <AnimatePresence>
+                {notificationsOpen && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-40" 
+                      onClick={() => setNotificationsOpen(false)}
+                    />
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-surface-200 z-50"
+                    >
+                      <div className="p-4 border-b border-surface-100">
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-semibold text-surface-900">Notifications</h3>
+                          <button 
+                            onClick={() => setNotificationsOpen(false)}
+                            className="text-surface-500 hover:text-surface-700 transition-colors"
+                          >
+                            <ApperIcon name="X" size={16} />
+                          </button>
+                        </div>
+                      </div>
+                      
+                      <div className="max-h-96 overflow-y-auto">
+                        {[
+                          {
+                            id: 1,
+                            title: "New Patient Admission",
+                            message: "Sarah Johnson has been admitted to Ward 3A",
+                            time: "5 minutes ago",
+                            unread: true,
+                            type: "admission"
+                          },
+                          {
+                            id: 2,
+                            title: "Lab Results Ready",
+                            message: "Blood work results available for Patient #12458",
+                            time: "15 minutes ago",
+                            unread: true,
+                            type: "lab"
+                          },
+                          {
+                            id: 3,
+                            title: "Appointment Reminder",
+                            message: "Dr. Smith consultation at 2:30 PM",
+                            time: "1 hour ago",
+                            unread: false,
+                            type: "appointment"
+                          },
+                          {
+                            id: 4,
+                            title: "Medication Alert",
+                            message: "Patient medication review due today",
+                            time: "2 hours ago",
+                            unread: false,
+                            type: "medication"
+                          }
+                        ].map((notification) => (
+                          <div
+                            key={notification.id}
+                            className={`p-4 border-b border-surface-50 hover:bg-surface-25 transition-colors cursor-pointer ${
+                              notification.unread ? 'bg-blue-50 border-l-4 border-l-primary' : ''
+                            }`}
+                          >
+                            <div className="flex items-start space-x-3">
+                              <div className={`p-2 rounded-lg ${
+                                notification.type === 'admission' ? 'bg-green-100 text-green-600' :
+                                notification.type === 'lab' ? 'bg-blue-100 text-blue-600' :
+                                notification.type === 'appointment' ? 'bg-orange-100 text-orange-600' :
+                                'bg-purple-100 text-purple-600'
+                              }`}>
+                                <ApperIcon 
+                                  name={
+                                    notification.type === 'admission' ? 'UserPlus' :
+                                    notification.type === 'lab' ? 'FlaskConical' :
+                                    notification.type === 'appointment' ? 'Calendar' :
+                                    'Pill'
+                                  } 
+                                  size={16} 
+                                />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between">
+                                  <h4 className="font-medium text-surface-900 truncate">
+                                    {notification.title}
+                                  </h4>
+                                  {notification.unread && (
+                                    <div className="w-2 h-2 bg-primary rounded-full ml-2"></div>
+                                  )}
+                                </div>
+                                <p className="text-sm text-surface-600 mt-1">{notification.message}</p>
+                                <p className="text-xs text-surface-500 mt-1">{notification.time}</p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <div className="p-4 border-t border-surface-100">
+                        <button className="w-full text-center text-sm text-primary hover:text-primary-dark transition-colors font-medium">
+                          Mark all as read
+                        </button>
+                      </div>
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
+            </div>
+            
             <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
               <ApperIcon name="User" size={16} className="text-white" />
             </div>
