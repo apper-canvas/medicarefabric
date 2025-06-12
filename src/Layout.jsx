@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Outlet, NavLink, useLocation } from 'react-router-dom';
+import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import ApperIcon from '@/components/ApperIcon';
 import { routes } from './config/routes';
@@ -7,9 +7,28 @@ import { routes } from './config/routes';
 function Layout() {
 const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const location = useLocation();
+const location = useLocation();
+  const navigate = useNavigate();
 
   const visibleRoutes = Object.values(routes).filter(route => !route.hidden);
+
+  const handleNotificationClick = (notification) => {
+    // Route based on notification type
+    switch (notification.type) {
+      case 'admission':
+      case 'lab':
+        navigate('/patients');
+        break;
+      case 'appointment':
+        navigate('/appointments');
+        break;
+      case 'medication':
+        navigate('/patients');
+        break;
+      default:
+        navigate('/');
+    }
+  };
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
@@ -111,12 +130,13 @@ className="absolute right-0 mt-2 w-72 sm:w-80 max-w-[calc(100vw-2rem)] bg-white 
                             unread: false,
                             type: "medication"
                           }
-                        ].map((notification) => (
+].map((notification) => (
                           <div
                             key={notification.id}
                             className={`p-4 border-b border-surface-50 hover:bg-surface-25 transition-colors cursor-pointer ${
                               notification.unread ? 'bg-blue-50 border-l-4 border-l-primary' : ''
                             }`}
+                            onClick={() => handleNotificationClick(notification)}
                           >
                             <div className="flex items-start space-x-3">
                               <div className={`p-2 rounded-lg ${
