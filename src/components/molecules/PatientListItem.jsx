@@ -8,12 +8,20 @@ import Button from '@/components/atoms/Button';
 const PatientListItem = ({ patient, index, onClick, onEdit, onDelete }) => {
   const handleEditClick = (e) => {
     e.stopPropagation();
-    onEdit();
+    if (typeof onEdit === 'function') {
+      onEdit();
+    } else {
+      console.warn('PatientListItem: onEdit prop is not a function');
+    }
   };
 
   const handleDeleteClick = (e) => {
     e.stopPropagation();
-    onDelete();
+    if (typeof onDelete === 'function') {
+      onDelete();
+    } else {
+      console.warn('PatientListItem: onDelete prop is not a function');
+    }
   };
 
   return (
