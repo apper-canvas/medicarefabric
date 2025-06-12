@@ -1,8 +1,11 @@
+import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import ApperIcon from '../components/ApperIcon';
+import ApperIcon from '@/components/ApperIcon';
+import Button from '@/components/atoms/Button';
+import Text from '@/components/atoms/Text';
 
-function NotFound() {
+function NotFoundPage() {
   const navigate = useNavigate();
 
   return (
@@ -19,30 +22,21 @@ function NotFound() {
         >
           <ApperIcon name="AlertCircle" className="w-24 h-24 text-surface-300 mx-auto" />
         </motion.div>
-        
-        <h1 className="text-4xl font-bold text-surface-900 mb-4">Page Not Found</h1>
-        <p className="text-surface-600 mb-8 max-w-md mx-auto">
+
+        <Text as="h1" className="text-4xl font-bold text-surface-900 mb-4">Page Not Found</Text>
+        <Text as="p" className="text-surface-600 mb-8 max-w-md mx-auto">
           The page you're looking for doesn't exist or has been moved.
-        </p>
-        
+        </Text>
+
         <div className="space-y-4">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => navigate('/')}
-            className="inline-flex items-center space-x-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
-          >
-            <ApperIcon name="Home" size={20} />
-            <span>Go to Dashboard</span>
-          </motion.button>
-          
+          <Button onClick={() => navigate('/')} icon="Home" variant="primary">
+            Go to Dashboard
+          </Button>
+
           <div className="text-sm text-surface-500">
-            <button
-              onClick={() => navigate(-1)}
-              className="text-primary hover:text-primary/80"
-            >
+            <Button onClick={() => navigate(-1)} variant="text">
               ← Go back to previous page
-            </button>
+            </Button>
           </div>
         </div>
       </motion.div>
@@ -50,4 +44,4 @@ function NotFound() {
   );
 }
 
-export default NotFound;
+export default NotFoundPage;

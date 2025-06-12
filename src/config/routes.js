@@ -1,11 +1,11 @@
-import Home from '../pages/Home';
-import Patients from '../pages/Patients';
-import PatientDetail from '../pages/PatientDetail';
-import Appointments from '../pages/Appointments';
-import Departments from '../pages/Departments';
-import Beds from '../pages/Beds';
-import Reports from '../pages/Reports';
-import NotFound from '../pages/NotFound';
+import HomePage from '@/components/pages/HomePage';
+import PatientsPage from '@/components/pages/PatientsPage';
+import PatientDetailPage from '@/components/pages/PatientDetailPage';
+import AppointmentsPage from '@/components/pages/AppointmentsPage';
+import DepartmentsPage from '@/components/pages/DepartmentsPage';
+import BedsPage from '@/components/pages/BedsPage';
+import ReportsPage from '@/components/pages/ReportsPage';
+import NotFoundPage from '@/components/pages/NotFoundPage';
 
 export const routes = {
   dashboard: {
@@ -13,21 +13,21 @@ export const routes = {
     label: 'Dashboard',
     path: '/',
     icon: 'LayoutDashboard',
-    component: Home
+component: HomePage
   },
   patients: {
     id: 'patients',
     label: 'Patients',
     path: '/patients',
     icon: 'Users',
-    component: Patients
+component: PatientsPage
   },
   patientDetail: {
     id: 'patientDetail',
     label: 'Patient Detail',
     path: '/patients/:id',
     icon: 'User',
-    component: PatientDetail,
+component: PatientDetailPage,
     hidden: true
   },
   appointments: {
@@ -35,35 +35,35 @@ export const routes = {
     label: 'Appointments',
     path: '/appointments',
     icon: 'Calendar',
-    component: Appointments
+component: AppointmentsPage
   },
   departments: {
     id: 'departments',
     label: 'Departments',
     path: '/departments',
     icon: 'Building2',
-    component: Departments
+component: DepartmentsPage
   },
   beds: {
     id: 'beds',
     label: 'Beds',
     path: '/beds',
     icon: 'Bed',
-    component: Beds
+component: BedsPage
   },
   reports: {
     id: 'reports',
     label: 'Reports',
     path: '/reports',
     icon: 'BarChart3',
-    component: Reports
+component: ReportsPage
   },
   notFound: {
     id: 'notFound',
     label: 'Not Found',
     path: '*',
     icon: 'AlertCircle',
-    component: NotFound,
+component: NotFoundPage,
     hidden: true
   }
 };
