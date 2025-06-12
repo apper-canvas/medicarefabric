@@ -184,6 +184,16 @@ const [showEditForm, setShowEditForm] = useState(false);
         isOpen={showAddForm}
         onClose={() => setShowAddForm(false)}
         onSubmit={handleAddPatient}
+/>
+
+      <EditPatientForm
+        isOpen={showEditForm}
+        onClose={() => {
+          setShowEditForm(false);
+          setEditingPatient(null);
+        }}
+        onSubmit={handleEditPatient}
+        initialData={editingPatient}
       />
     </div>
   );
