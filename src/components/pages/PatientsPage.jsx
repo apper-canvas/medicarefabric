@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import PageHeader from '@/components/molecules/PageHeader';
 import AddPatientForm from '@/components/organisms/AddPatientForm';
 import PatientListOrganism from '@/components/organisms/PatientListOrganism';
+import EditPatientForm from '@/components/organisms/EditPatientForm';
 import Button from '@/components/atoms/Button';
 import Input from '@/components/atoms/Input';
 import ApperIcon from '@/components/ApperIcon';
@@ -22,8 +23,9 @@ function PatientsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [departmentFilter, setDepartmentFilter] = useState('all');
-  const [showAddForm, setShowAddForm] = useState(false);
-
+const [showAddForm, setShowAddForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [editingPatient, setEditingPatient] = useState(null);
   const departments = ['Emergency', 'Cardiology', 'Neurology', 'Pediatrics', 'Orthopedics', 'ICU'];
   const statuses = ['admitted', 'critical', 'stable', 'discharge pending'];
 
@@ -69,12 +71,8 @@ if (searchTerm) {
       filtered = filtered.filter(patient => patient.department === departmentFilter);
     }
 
-    setFilteredPatients(filtered);
-    setFilteredPatients(filtered);
+setFilteredPatients(filtered);
   };
-const [showEditForm, setShowEditForm] = useState(false);
-  const [editingPatient, setEditingPatient] = useState(null);
-
   const handleAddPatient = async (patientData) => {
     try {
       const patientToCreate = {
