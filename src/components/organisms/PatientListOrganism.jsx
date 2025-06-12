@@ -4,7 +4,7 @@ import EmptyState from '@/components/molecules/EmptyState';
 import ApperIcon from '@/components/ApperIcon';
 import Text from '@/components/atoms/Text';
 
-const PatientListOrganism = ({ filteredPatients, totalPatientsCount, onPatientClick, onAddFirstPatient }) => {
+const PatientListOrganism = ({ filteredPatients, totalPatientsCount, onPatientClick, onAddFirstPatient, onEditPatient, onDeletePatient }) => {
   return (
     <>
       <div className="bg-white rounded-lg p-4 shadow-sm">
@@ -23,11 +23,13 @@ const PatientListOrganism = ({ filteredPatients, totalPatientsCount, onPatientCl
       ) : (
         <div className="space-y-4">
           {filteredPatients.map((patient, index) => (
-            <PatientListItem
+<PatientListItem
               key={patient.id}
               patient={patient}
               index={index}
               onClick={() => onPatientClick(patient.id)}
+              onEdit={() => onEditPatient(patient)}
+              onDelete={() => onDeletePatient(patient.id)}
             />
           ))}
         </div>

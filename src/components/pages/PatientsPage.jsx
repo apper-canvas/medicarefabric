@@ -72,6 +72,8 @@ if (searchTerm) {
     setFilteredPatients(filtered);
     setFilteredPatients(filtered);
   };
+const [showEditForm, setShowEditForm] = useState(false);
+  const [editingPatient, setEditingPatient] = useState(null);
 
   const handleAddPatient = async (patientData) => {
     try {
@@ -83,7 +85,7 @@ if (searchTerm) {
       };
 
       const addedPatient = await patientService.create(patientToCreate);
-      setPatients([addedPatient, ...patients]);
+      await loadPatients(); // Refresh the list
       setShowAddForm(false);
       toast.success('Patient registered successfully');
     } catch (err) {
@@ -91,6 +93,34 @@ if (searchTerm) {
     }
   };
 
+  const handleEditPatient = async (patientData) => {
+    try {
+      await patientService.update(editingPatient.id, patientData);
+      await loadPatients(); // Refresh the list
+      setShowEditForm(false);
+      setEditingPatient(null);
+      toast.success('Patient updated successfully');
+    } catch (err) {
+      toast.error('Failed to update patient');
+    }
+  };
+
+  const handleDeletePatient = async (patientId) => {
+    if (window.confirm('Are you sure you want to delete this patient? This action cannot be undone.')) {
+      try {
+        await patientService.remove(patientId);
+        await loadPatients(); // Refresh the list
+        toast.success('Patient deleted successfully');
+      } catch (err) {
+        toast.error('Failed to delete patient');
+      }
+    }
+  };
+
+  const openEditForm = (patient) => {
+    setEditingPatient(patient);
+    setShowEditForm(true);
+  };
   if (loading) {
     return <Loader count={5} type="list" />;
   }
@@ -141,11 +171,13 @@ if (searchTerm) {
         </div>
       </Card>
 
-      <PatientListOrganism
+<PatientListOrganism
         filteredPatients={filteredPatients}
         totalPatientsCount={patients.length}
         onPatientClick={(id) => navigate(`/patients/${id}`)}
         onAddFirstPatient={() => setShowAddForm(true)}
+        onEditPatient={openEditForm}
+        onDeletePatient={handleDeletePatient}
       />
 
       <AddPatientForm
