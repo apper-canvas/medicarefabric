@@ -63,7 +63,7 @@ const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -10, scale: 0.95 }}
                       transition={{ duration: 0.2 }}
-                      className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-surface-200 z-50"
+className="absolute right-0 mt-2 w-72 sm:w-80 max-w-[calc(100vw-2rem)] bg-white rounded-xl shadow-xl border border-surface-200 z-50"
                     >
                       <div className="p-4 border-b border-surface-100">
                         <div className="flex items-center justify-between">
