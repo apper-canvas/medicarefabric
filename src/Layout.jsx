@@ -1,14 +1,41 @@
-import { useState } from 'react';
+import { useState, useContext, useRef, useEffect } from 'react';
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSelector } from 'react-redux';
 import ApperIcon from '@/components/ApperIcon';
+import { AuthContext } from '@/App';
 import { routes } from './config/routes';
 
 function Layout() {
-const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-const location = useLocation();
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const location = useLocation();
   const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
+  const { user } = useSelector((state) => state.user);
+  const dropdownRef = useRef(null);
+
+  // Handle click outside to close dropdown
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setProfileDropdownOpen(false);
+      }
+    }
+
+    if (profileDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [profileDropdownOpen]);
+
+  const handleLogout = async () => {
+    setProfileDropdownOpen(false);
+    await logout();
+  };
 
   const visibleRoutes = Object.values(routes).filter(route => !route.hidden);
 
@@ -183,8 +210,57 @@ className="absolute right-0 mt-2 w-72 sm:w-80 max-w-[calc(100vw-2rem)] bg-white 
               </AnimatePresence>
             </div>
             
-            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-              <ApperIcon name="User" size={16} className="text-white" />
+<div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                className="w-8 h-8 bg-primary rounded-full flex items-center justify-center hover:bg-primary-dark transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              >
+                <ApperIcon name="User" size={16} className="text-white" />
+              </button>
+              
+              {/* Profile Dropdown */}
+              <AnimatePresence>
+                {profileDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                    transition={{ duration: 0.1 }}
+                    className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-surface-200 py-2 z-50"
+                  >
+                    {/* User Info */}
+                    <div className="px-4 py-3 border-b border-surface-100">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+                          <ApperIcon name="User" size={20} className="text-white" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-surface-900 truncate">
+                            {user?.firstName && user?.lastName 
+                              ? `${user.firstName} ${user.lastName}`
+                              : user?.emailAddress || 'User'
+                            }
+                          </p>
+                          <p className="text-xs text-surface-500 truncate">
+                            {user?.emailAddress || 'No email'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Logout Button */}
+                    <div className="px-2 py-1">
+                      <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center space-x-3 px-3 py-2 text-left text-sm text-surface-700 hover:bg-surface-50 rounded-md transition-colors"
+                      >
+                        <ApperIcon name="LogOut" size={16} />
+                        <span>Sign Out</span>
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         </div>
